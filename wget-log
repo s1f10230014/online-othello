@@ -1,0 +1,4 @@
+--2023-06-12 18:42:14--  https://update.code.visualstudio.com/commit:b380da4ef1ee00e224a15c1d4d9793e27c2b6302/server-linux-x64/stable
+Resolving update.code.visualstudio.com (update.code.visualstudio.com)... 20.43.132.130, 64:ff9b::142b:8482
+Connecting to update.code.visualstudio.com (update.code.visualstudio.com)|20.43.132.130|:443... failed: No route to host.
+Connecting to update.code.visualstudio.com (update.code.visualstudio.com)|64:ff9b::142b:8482|:443... failed: Network is unreachable.

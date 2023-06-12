@@ -19,13 +19,16 @@ const Home = () => {
   const [board, setboard] = useState<number[][]>();
 
   const fetchBoard = async () => {
-    const board = await apiClient.board.$get().catch(returnNull);
+    const res = await apiClient.rooms.$get().catch(returnNull);
 
-    if (board !== null) setboard(board.board);
+    if (res === null) {
+      const newRoom = await apiClient.rooms.board.$post();
+      setboard(newRoom.board);
+    };
   };
 
   const clickCell = async (x: number, y: number) => {
-    await apiClient.board.$post({ body: { x, y } });
+    await apiClient.rooms.$post({ body: { x, y } });
     await fetchBoard();
   };
 

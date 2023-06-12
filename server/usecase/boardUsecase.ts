@@ -1,5 +1,5 @@
 import type { UserId } from '$/commonTypesWithClient/branded';
-import { userColorRepository } from './userColorRepository';
+import { userColorUsecase } from './userColorUsecase';
 
 export type BoardArr = number[][];
 
@@ -19,8 +19,8 @@ const board: BoardArr = [
 export const boardrepository = {
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, UserId: UserId): BoardArr => {
-    userColorRepository.getUserColor(UserId);
-    board[params.y][params.x] = userColorRepository.getUserColor(UserId);
+    userColorUsecase.getUserColor(UserId);
+    board[params.y][params.x] = userColorUsecase.getUserColor(UserId);
     return board;
   },
 };
