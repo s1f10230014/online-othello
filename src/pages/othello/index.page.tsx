@@ -1,6 +1,4 @@
-import type { TaskModel } from '$/commonTypesWithClient/models';
 import { useAtom } from 'jotai';
-import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { Loading } from 'src/components/Loading/Loading';
 import { apiClient } from 'src/utils/apiClient';
@@ -10,11 +8,11 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
-  const [tasks, setTasks] = useState<TaskModel[] | undefined>(undefined);
-  const [label, setLabel] = useState('');
-  const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
-    setLabel(e.target.value);
-  };
+  // const [tasks, setTasks] = useState<TaskModel[] | undefined>(undefined);
+  // const [label, setLabel] = useState('');
+  // const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
+  //   setLabel(e.target.value);
+  // };
 
   const [board, setboard] = useState<number[][]>();
 
@@ -24,7 +22,7 @@ const Home = () => {
     if (res === null) {
       const newRoom = await apiClient.rooms.board.$post();
       setboard(newRoom.board);
-    };
+    }
   };
 
   const clickCell = async (x: number, y: number) => {
@@ -39,7 +37,12 @@ const Home = () => {
     };
   }, []);
 
-  if (!user || !board) return <Loading visible />;
+  if (
+    // !user
+    // ||
+    !board
+  )
+    return <Loading visible />;
 
   return (
     <div className={styles.container}>
