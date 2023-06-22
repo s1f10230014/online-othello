@@ -8,11 +8,6 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
-  // const [tasks, setTasks] = useState<TaskModel[] | undefined>(undefined);
-  // const [label, setLabel] = useState('');
-  // const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
-  //   setLabel(e.target.value);
-  // };
 
   const [board, setboard] = useState<number[][]>();
 
@@ -37,12 +32,7 @@ const Home = () => {
     };
   }, []);
 
-  if (
-    // !user
-    // ||
-    !board
-  )
-    return <Loading visible />;
+  if (!user || !board) return <Loading visible />;
 
   return (
     <div className={styles.container}>
