@@ -1,6 +1,4 @@
-import type { TaskModel } from '$/commonTypesWithClient/models';
 import { useAtom } from 'jotai';
-import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { Loading } from 'src/components/Loading/Loading';
 import { apiClient } from 'src/utils/apiClient';
@@ -10,22 +8,22 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
-  const [tasks, setTasks] = useState<TaskModel[] | undefined>(undefined);
-  const [label, setLabel] = useState('');
-  const inputLabel = (e: ChangeEvent<HTMLInputElement>) => {
-    setLabel(e.target.value);
-  };
 
   const [board, setboard] = useState<number[][]>();
 
   const fetchBoard = async () => {
-    const board = await apiClient.board.$get().catch(returnNull);
+    const res = await apiClient.rooms.$get().catch(returnNull);
 
-    if (board !== null) setboard(board.board);
+    if (res === null) {
+      const newRoom = await apiClient.rooms.$get().catch(returnNull);
+      setboard(newRoom?.board);
+    } else {
+      setboard(res.board);
+    }
   };
 
   const clickCell = async (x: number, y: number) => {
-    await apiClient.board.$post({ body: { x, y } });
+    await apiClient.rooms.$post({ body: { x, y } });
     await fetchBoard();
   };
 
