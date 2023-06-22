@@ -8,7 +8,7 @@ export type UserModel = {
 };
 
 export type TaskModel = {
-  id: TaskId
+  id: TaskId;
   label: string;
   done: boolean;
   created: number;
@@ -19,5 +19,4 @@ export type RoomModel = {
   board: number[][];
   status: 'waiting' | 'playing' | 'ended';
   created: number;
-
-}
+};

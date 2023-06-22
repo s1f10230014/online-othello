@@ -15,8 +15,10 @@ const Home = () => {
     const res = await apiClient.rooms.$get().catch(returnNull);
 
     if (res === null) {
-      const newRoom = await apiClient.rooms.board.$post();
-      setboard(newRoom.board);
+      const newRoom = await apiClient.rooms.$get().catch(returnNull);
+      setboard(newRoom?.board);
+    } else {
+      setboard(res.board);
     }
   };
 
