@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { TaskId, UserId, RoomId} from '../commonTypesWithClient/branded';
+import type { RoomId, TaskId, UserId } from '../commonTypesWithClient/branded';
 
 export const UserIdParser: z.ZodType<UserId> = z.string().brand<'UserId'>();
 

@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 
-type Branded<T extends string> = string & z.BRAND<T>;//幽霊型
+type Branded<T extends string> = string & z.BRAND<T>; //幽霊型
 
 export type UserId = Branded<'UserId'>;
 
