@@ -5,16 +5,16 @@ export type BoardArr = number[][];
 
 export type Pos = { x: number; y: number };
 
-const board: BoardArr = [
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 2, 1, 0, 0, 0],
-  [0, 0, 0, 1, 2, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-];
+// const board: BoardArr = [
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 2, 1, 0, 0, 0],
+//   [0, 0, 0, 1, 2, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+// ];
 
 const aroundS = [
   [-1, 0],
@@ -33,7 +33,8 @@ const boardTerms = function (
   x: number,
   around: number[],
   turnColor: number,
-  distance: number
+  distance: number,
+  board: BoardArr
 ) {
   if (board[y + around[0] * distance][x + around[1] * distance] === 3 - turnColor) {
     passThrough = true;
@@ -46,7 +47,13 @@ const boardTerms = function (
   }
 };
 
-const distanceBoard = function (y: number, x: number, around: number[], turnColor: number) {
+const distanceBoard = function (
+  y: number,
+  x: number,
+  around: number[],
+  turnColor: number,
+  board: BoardArr
+) {
   let ok = true;
   passThrough = false;
   for (let distance = 1; distance < 8; distance += 1) {
@@ -57,7 +64,7 @@ const distanceBoard = function (y: number, x: number, around: number[], turnColo
       ) {
         ok = false;
       } else {
-        boardTerms(y, x, around, turnColor, distance);
+        boardTerms(y, x, around, turnColor, distance, board);
       }
     }
   }
@@ -66,18 +73,18 @@ const distanceBoard = function (y: number, x: number, around: number[], turnColo
 let turn = 1;
 
 export const boardUsecase = {
-  getBoard: (): BoardArr => board,
+  // getBoard: (): BoardArr => board,
 
-  clickBoard: (params: Pos, userId: UserId): BoardArr => {
+  clickBoard: (params: Pos, userId: UserId, inBoard: BoardArr): BoardArr => {
     if (turn === userColorUsecase.getUserColor(userId)) {
-      if (board[params.y][params.x] === 0) {
+      if (inBoard[params.y][params.x] === 0) {
         for (const around of aroundS) {
-          distanceBoard(params.y, params.x, around, userColorUsecase.getUserColor(userId));
+          distanceBoard(params.y, params.x, around, userColorUsecase.getUserColor(userId), inBoard);
         }
       }
 
       turn = 3 - turn;
     }
-    return board;
+    return inBoard;
   },
 };
