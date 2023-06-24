@@ -9,8 +9,8 @@ const board: BoardArr = [
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 2, 1, 0, 0, 0],
+  [0, 0, 0, 1, 2, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
@@ -67,6 +67,7 @@ let turn = 1;
 
 export const boardUsecase = {
   getBoard: (): BoardArr => board,
+
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turn === userColorUsecase.getUserColor(userId)) {
       if (board[params.y][params.x] === 0) {

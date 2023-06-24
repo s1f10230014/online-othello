@@ -40,7 +40,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'error',
     complexity: ['error', 5],
     'max-depth': ['error', 3], //1~3目安
-    'max-nested-callbacks': ['error', 3],
+    'max-nested-callbacks': ['error', 3], //再起
     'max-lines': ['error', 200],
   },
   overrides: [
