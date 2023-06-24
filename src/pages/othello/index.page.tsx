@@ -22,6 +22,7 @@ const Home = () => {
     }
   };
 
+  //yyyy
   const clickCell = async (x: number, y: number) => {
     await apiClient.rooms.$post({ body: { x, y } });
     await fetchBoard();
