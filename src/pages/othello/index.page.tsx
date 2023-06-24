@@ -15,7 +15,7 @@ const Home = () => {
     const res = await apiClient.rooms.$get().catch(returnNull);
 
     if (res === null) {
-      const newRoom = await apiClient.rooms.$get().catch(returnNull);
+      const newRoom = await apiClient.rooms.$post();
       setboard(newRoom?.board);
     } else {
       setboard(res.board);
@@ -23,7 +23,7 @@ const Home = () => {
   };
 
   const clickCell = async (x: number, y: number) => {
-    await apiClient.rooms.$post({ body: { x, y } });
+    await apiClient.rooms.board.$post({ body: { x, y } });
     await fetchBoard();
   };
 
