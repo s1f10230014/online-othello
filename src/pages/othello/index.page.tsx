@@ -11,6 +11,7 @@ const Home = () => {
 
   const [board, setboard] = useState<number[][]>();
 
+  //問題だった部分
   const fetchBoard = async () => {
     const res = await apiClient.rooms.$get().catch(returnNull);
 
