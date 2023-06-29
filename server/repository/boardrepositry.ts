@@ -5,13 +5,13 @@ export type BoardArr = number[][];
 
 export type Pos = { x: number; y: number };
 
-const board: BoardArr = [
+let board: BoardArr = [
+  [7, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 7, 7, 0, 0, 0],
-  [0, 0, 7, 2, 1, 7, 0, 0],
-  [0, 0, 7, 1, 2, 7, 0, 0],
-  [0, 0, 0, 7, 7, 0, 0, 0],
+  [0, 0, 0, 7, 0, 0, 0, 0],
+  [0, 0, 7, 2, 1, 0, 0, 0],
+  [0, 0, 0, 1, 2, 7, 0, 0],
+  [0, 0, 0, 0, 7, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
 ];
@@ -82,30 +82,19 @@ function look_around(x: number, y: number): [number[], number[][]] {
 }
 const re_yelloy_position = () => {
   //過去の黄色枠座標消去
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[j][i] === 7) {
-        board[j][i] = 0;
-      }
-    }
-  }
+  board = board.map((row, i) => row.map((cell, j) => (board[j][i] === 7 ? 0 : cell)));
 };
 //ゼロ座標全検索
 const zero_serch = () => {
-  const zero_positions: number[][] = [];
-  for (let zy = 0; zy < board.length; zy++) {
-    for (let zx = 0; zx < board[zy].length; zx++) {
-      if (board[zy][zx] === 0) {
-        const f_zero_positions: number[] = [];
-        f_zero_positions.push(zx);
-        f_zero_positions.push(zy);
-        // console.log('f_zero_position', f_zero_positions);
-        zero_positions.push(f_zero_positions);
-        // console.log('zero_position', zero_positions);
-        //注意！zero_positionsは、x,yの順で格納されている
+  const zero_positions: number[][] = board.reduce((acc, row, y) => {
+    row.forEach((cell, x) => {
+      if (cell === 0) {
+        acc.push([x, y]);
       }
-    }
-  }
+    });
+    return acc;
+  }, [] as number[][]);
+
   return zero_positions;
 };
 const yellow_position = (zero_positions: number[][]) => {
@@ -170,7 +159,6 @@ export const boardrepository = {
       re_yelloy_position();
       //有効クリック駒設置、駒返し処理
       const [click, return_list] = look_around(params.x, params.y);
-      // console.log('return_list', return_list, return_list[0], return_list[1]);
       turn(click, return_list);
       const zero_list = zero_serch();
       yellow_position(zero_list);
