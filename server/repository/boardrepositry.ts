@@ -5,8 +5,8 @@ export type BoardArr = number[][];
 
 export type Pos = { x: number; y: number };
 
-let board: BoardArr = [
-  [7, 0, 0, 0, 0, 0, 0, 0],
+const board: BoardArr = [
+  [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 7, 0, 0, 0, 0],
   [0, 0, 7, 2, 1, 0, 0, 0],
@@ -25,133 +25,59 @@ const directions = [
   [-1, 0],
   [-1, -1],
 ];
-let turnColor = 1;
-//8方向を参照して対駒座標、返し駒座標リストを返す関数
-function look_around(x: number, y: number): [number[], number[][]] {
-  //確定返し駒リスト※x,yの順番で格納されてる
-  let return_piece_list: number[][] = [];
-  //クリック座標
-  let valid_click_state: number[] = [];
-  for (const course of directions) {
-    //臨時返し駒リスト※x,yの順番で格納されてる
-    const temporary_return_piece_list: number[][] = [];
 
-    //1つ隣が異色駒の場合は、2つ以降の隣コマ参照
-    if (
-      board[y + course[1]] !== undefined &&
-      board[x + course[0]] !== undefined &&
-      board[y + course[1]][x + course[0]] === 3 - turnColor
-    ) {
-      // console.log('隣異色０座標', assume_x, assume_y, course[0], course[1]);
-      for (let next_squares = 2; next_squares <= 7; next_squares++) {
-        const x_next_squares = course[0] * next_squares + x;
-        const y_next_squares = course[1] * next_squares + y;
+const turnColor = 1;
 
-        //臨時返し駒リストへ格納※pushの順番注意
-        temporary_return_piece_list.push([x_next_squares, y_next_squares]);
-
-        if (
-          //対駒の前に0が来たらbreak
-          board[y_next_squares] !== undefined &&
-          board[x_next_squares] !== undefined &&
-          board[y_next_squares][x_next_squares] === 0
-        ) {
-          break;
-        }
-
-        if (
-          board[y_next_squares] !== undefined &&
-          board[x_next_squares] !== undefined &&
-          board[y_next_squares][x_next_squares] === turnColor
-        ) {
-          //対駒がある場合、1つ隣のマスを臨時返し駒リストへ格納
-          temporary_return_piece_list.push([x + course[0], y + course[1]]);
-
-          //対駒がある場合、臨時返し駒リストの座標をリストへ
-          return_piece_list = return_piece_list.concat(temporary_return_piece_list);
-
-          //対駒が認識された場合、クリック座標を格納※x,yの順で格納
-          valid_click_state = [x, y];
-
-          break;
-        }
-      }
-    }
-  }
-  return [valid_click_state, return_piece_list];
-}
-const re_yelloy_position = () => {
-  //過去の黄色枠座標消去
-  board = board.map((row, i) => row.map((cell, j) => (board[j][i] === 7 ? 0 : cell)));
-};
-//ゼロ座標全検索
-const zero_serch = () => {
-  const zero_positions: number[][] = board.reduce((acc, row, y) => {
-    row.forEach((cell, x) => {
-      if (cell === 0) {
-        acc.push([x, y]);
+//0座標取得
+const get_zero_positions = (board: BoardArr) => {
+  const zero_positions: number[][] = [];
+  board.map((y, rowIndex_y) => {
+    y.map((x, colIndex_x) => {
+      if (x === 0) {
+        zero_positions.push([rowIndex_y, colIndex_x]);
       }
     });
-    return acc;
-  }, [] as number[][]);
-
+  });
   return zero_positions;
 };
-const yellow_position = (zero_positions: number[][]) => {
-  //0座標から8方向参照、黄色枠位置割り出し処理
-  for (const one_zero_position of zero_positions) {
-    for (const course of directions) {
-      if (
-        //0座標の隣が ※異色 の場合処理を行う
-        board[one_zero_position[1] + course[1]] !== undefined &&
-        board[one_zero_position[0] + course[0]] !== undefined &&
-        board[one_zero_position[1] + course[1]][one_zero_position[0] + course[0]] === 3 - turnColor
-      ) {
-        //2マス目以降対駒探し
-        for (let next_squares = 2; next_squares <= 7; next_squares++) {
-          const x_next_squares = course[0] * next_squares + one_zero_position[0];
-          const y_next_squares = course[1] * next_squares + one_zero_position[1];
 
-          if (
-            //対駒の前に0が来たらbreak
-            board[y_next_squares] !== undefined &&
-            board[x_next_squares] !== undefined &&
-            board[y_next_squares][x_next_squares] === 0
-          ) {
-            break;
-          }
-
-          if (
-            //対駒在りの場合、0座標を'7'に変更
-            board[y_next_squares] !== undefined &&
-            board[x_next_squares] !== undefined &&
-            board[y_next_squares][x_next_squares] === turnColor
-          ) {
-            console.log('有効ゼロ座標', one_zero_position[0], one_zero_position[1]);
-            board[one_zero_position[1]][one_zero_position[0]] = 7;
-
-            break;
-          }
-        }
-      }
-    }
-  }
-};
-const turn = (click: number[], return_list: number[][]) => {
+//隣が異色の場合、対ゴマ探し
+const serch_turn_color = (
+  one_zero_position: number[],
+  one_direction: number[],
+  temporary_return_list: number[][]
+) => {
+  const count = 2;
   if (
-    board[click[1]] !== undefined &&
-    board[click[0]] !== undefined &&
-    board[click[1]][click[0]] === 0
+    board[one_zero_position[0] + one_direction[0] * count]?.[
+      one_zero_position[1] + one_direction[1] * count
+    ] === turnColor
   ) {
-    board[click[1]][click[0]] = turnColor;
-
-    for (const one_return_list of return_list) {
-      board[one_return_list[1]][one_return_list[0]] = turnColor;
-    }
-
-    turnColor = 3 - turnColor;
+    board[one_zero_position[0]][one_zero_position[1]] = 7;
+    const return_list: number[][] = temporary_return_list;
+    return_list[String(one_zero_position)];
   }
 };
+
+const Possible_click_positions = () => {
+  const zero_positions_list = get_zero_positions(board);
+
+  zero_positions_list.forEach((one_zero_position) => {
+    directions.forEach((one_direction) => {
+      if (
+        board[one_zero_position[0] + one_direction[0]]?.[
+          one_zero_position[1] + one_direction[1]
+        ] ===
+        3 - turnColor
+      ) {
+        const temporary_return_list: number[][] = [
+          [one_zero_position[0] + one_direction[0], one_zero_position[1] + one_direction[1]],
+        ];
+      }
+    });
+  });
+};
+
 export const boardrepository = {
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
