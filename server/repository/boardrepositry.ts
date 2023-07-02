@@ -28,7 +28,7 @@ const directions = [
 
 const turnColor = 1;
 
-//0座標取得
+//0座標取得(候補地設置に使用)
 const get_zero_positions = (board: BoardArr) => {
   const zero_positions: number[][] = [];
   board.map((y, rowIndex_y) => {
@@ -41,12 +41,8 @@ const get_zero_positions = (board: BoardArr) => {
   return zero_positions;
 };
 
-//隣が異色の場合、対ゴマ探し
-const serch_turn_color = (
-  one_zero_position: number[],
-  one_direction: number[],
-  temporary_return_list: number[][]
-) => {
+//隣が異色の場合、対ゴマ探し(候補地設置に使用)
+const serch_turn_color = (one_zero_position: number[], one_direction: number[]) => {
   const count = 2;
   if (
     board[one_zero_position[0] + one_direction[0] * count]?.[
@@ -54,11 +50,10 @@ const serch_turn_color = (
     ] === turnColor
   ) {
     board[one_zero_position[0]][one_zero_position[1]] = 7;
-    const return_list: number[][] = temporary_return_list;
-    return_list[String(one_zero_position)];
   }
 };
 
+//候補地設置
 const Possible_click_positions = () => {
   const zero_positions_list = get_zero_positions(board);
 
@@ -70,24 +65,24 @@ const Possible_click_positions = () => {
         ] ===
         3 - turnColor
       ) {
-        const temporary_return_list: number[][] = [
-          [one_zero_position[0] + one_direction[0], one_zero_position[1] + one_direction[1]],
-        ];
+        serch_turn_color(one_zero_position, one_direction);
       }
     });
   });
+};
+
+//駒設置と、裏返し
+const reversi = (y: number, x: number) => {
+  if (board[y][x] === 7) {
+    board[y][x] = turnColor;
+  }
 };
 
 export const boardrepository = {
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
-      re_yelloy_position();
-      //有効クリック駒設置、駒返し処理
-      const [click, return_list] = look_around(params.x, params.y);
-      turn(click, return_list);
-      const zero_list = zero_serch();
-      yellow_position(zero_list);
+      Possible_click_positions();
     }
     return board;
   },
