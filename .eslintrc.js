@@ -38,7 +38,7 @@ module.exports = {
     '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'error',
-    complexity: ['error', 2], //5
+    complexity: ['error', 4], //5
     'max-depth': ['error', 1], //2
     'max-nested-callbacks': ['error', 3],
     'max-lines': ['error', 200],

@@ -1,10 +1,7 @@
 import type { UserId } from '$/commonTypesWithClient/branded';
 import { userColorRepository } from './userColorRepository';
-
 export type BoardArr = number[][];
-
 export type Pos = { x: number; y: number };
-
 const board: BoardArr = [
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
@@ -25,9 +22,7 @@ const directions = [
   [-1, 0],
   [-1, -1],
 ];
-
-const turnColor = 1;
-
+let turnColor = 1;
 //0座標取得(候補地設置に使用)
 const get_zero_positions = (board: BoardArr) => {
   const zero_positions: number[][] = [];
@@ -40,44 +35,58 @@ const get_zero_positions = (board: BoardArr) => {
   });
   return zero_positions;
 };
-
-//隣が異色の場合、対ゴマ探し(候補地設置に使用)
-const serch_turn_color = (one_zero_position: number[], one_direction: number[]) => {
-  const count = 2;
+//隣が異色の場合、対ゴマ探しor候補地選出
+const serch_turn_color = (a_position: number[], one_direction: number[], count: number) => {
   if (
-    board[one_zero_position[0] + one_direction[0] * count]?.[
-      one_zero_position[1] + one_direction[1] * count
-    ] === turnColor
+    board[a_position[0] + one_direction[0] * count]?.[a_position[1] + one_direction[1] * count] ===
+    turnColor
   ) {
-    board[one_zero_position[0]][one_zero_position[1]] = 7;
+    const yellow_position: number[] = [a_position[0], a_position[1]];
+    const taigoma_positions: number[] = [
+      a_position[0] + one_direction[0] * count,
+      a_position[1] + one_direction[1] * count,
+    ];
+    return { yellow_position, taigoma_positions };
+  } else if (
+    board[a_position[0] + one_direction[0] * count]?.[a_position[1] + one_direction[1] * count] ===
+    3 - turnColor
+  ) {
+    count++;
+    serch_turn_color(a_position, one_direction, count);
   }
 };
 
-//候補地設置
-const Possible_click_positions = () => {
-  const zero_positions_list = get_zero_positions(board);
-
-  zero_positions_list.forEach((one_zero_position) => {
+//8方向参照
+const Possible_click_positions = (positions: number[][]) => {
+  let result: { yellow_position: number[]; taigoma_positions: number[] } | undefined = undefined;
+  const yellow_positions: number[][] = [];
+  const taigoma_positions: number[][] = [];
+  positions.forEach((a_position) => {
     directions.forEach((one_direction) => {
       if (
-        board[one_zero_position[0] + one_direction[0]]?.[
-          one_zero_position[1] + one_direction[1]
-        ] ===
+        board[a_position[0] + one_direction[0]]?.[a_position[1] + one_direction[1]] ===
         3 - turnColor
       ) {
-        serch_turn_color(one_zero_position, one_direction);
+        result = serch_turn_color(a_position, one_direction, 2);
+        result && yellow_positions.push(result.yellow_position);
+        result && taigoma_positions.push(result.taigoma_positions);
+        return { yellow_positions, taigoma_positions };
       }
     });
   });
 };
-
-//駒設置と、裏返し
+//裏返し処理
 const reversi = (y: number, x: number) => {
+  //ここにkyeで割りあてた対ゴマの位置リストから返す駒位置を計算し裏返す処理を書く
+};
+//駒設置と裏返し処理
+const othello = (y: number, x: number) => {
   if (board[y][x] === 7) {
     board[y][x] = turnColor;
+    //ここで、reversi関数を呼び出す
+    turnColor = 3 - turnColor;
   }
 };
-
 export const boardrepository = {
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
