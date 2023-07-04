@@ -67,7 +67,7 @@ const Home = () => {
                 {cell !== 0 && cell !== 7 && (
                   <div
                     className={styles.storn}
-                    style={{ background: cell === 1 ? '#131212' : '#d5d2d2' }}
+                    style={{ background: cell === 1 ? '#131212' : '#c3c3c3' }}
                   />
                 )}
 
