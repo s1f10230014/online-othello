@@ -24,7 +24,7 @@ const directions = [
 ];
 let turnColor = 1;
 //0座標取得(候補地設置に使用)
-const get_zero_positions = (board: BoardArr) => {
+const get_zero_positions = () => {
   const zero_positions: number[][] = [];
   board.map((y, rowIndex_y) => {
     y.map((x, colIndex_x) => {
@@ -35,55 +35,92 @@ const get_zero_positions = (board: BoardArr) => {
   });
   return zero_positions;
 };
+//過去の黄色枠座標消去
+const remove_yellow = () => {
+  board.forEach((row, rowIndex) =>
+    row.forEach((cell, cellIndex) => {
+      if (cell === 7) {
+        board[rowIndex][cellIndex] = 0;
+      }
+    })
+  );
+};
 //隣が異色の場合、対ゴマ探しor候補地選出
-const serch_turn_color = (a_position: number[], one_direction: number[], count: number) => {
+const serch_turn_color = (
+  a_position: number[],
+  one_direction: number[],
+  count: number,
+  select: number,
+  reversi_positions: number[][],
+  temporary_reversi_positions: number[][]
+) => {
   if (
     board[a_position[0] + one_direction[0] * count]?.[a_position[1] + one_direction[1] * count] ===
     turnColor
   ) {
-    const yellow_position: number[] = [a_position[0], a_position[1]];
-    const taigoma_positions: number[] = [
-      a_position[0] + one_direction[0] * count,
-      a_position[1] + one_direction[1] * count,
-    ];
-    return { yellow_position, taigoma_positions };
+    temporary_reversi_positions.push([
+      a_position[0] + one_direction[0],
+      a_position[1] + one_direction[1],
+    ]);
+    select === 0 && (board[a_position[0]][a_position[1]] = 7);
+    reversi_positions.push(...temporary_reversi_positions);
+    return reversi_positions;
   } else if (
     board[a_position[0] + one_direction[0] * count]?.[a_position[1] + one_direction[1] * count] ===
     3 - turnColor
   ) {
+    temporary_reversi_positions.push([
+      a_position[0] + one_direction[0] * count,
+      a_position[1] + one_direction[1] * count,
+    ]);
     count++;
-    serch_turn_color(a_position, one_direction, count);
+    serch_turn_color(
+      a_position,
+      one_direction,
+      count,
+      select,
+      reversi_positions,
+      temporary_reversi_positions
+    );
   }
+  temporary_reversi_positions = [];
 };
-
 //8方向参照
-const Possible_click_positions = (positions: number[][]) => {
-  let result: { yellow_position: number[]; taigoma_positions: number[] } | undefined = undefined;
-  const yellow_positions: number[][] = [];
-  const taigoma_positions: number[][] = [];
+const Possible_click_positions = (positions: number[][], select: number): number[][] => {
+  let result: number[][] | undefined = undefined;
+  let reversi_positions: number[][] = [];
+  const temporary_reversi_positions: number[][] = [];
+
   positions.forEach((a_position) => {
     directions.forEach((one_direction) => {
       if (
         board[a_position[0] + one_direction[0]]?.[a_position[1] + one_direction[1]] ===
         3 - turnColor
       ) {
-        result = serch_turn_color(a_position, one_direction, 2);
-        result && yellow_positions.push(result.yellow_position);
-        result && taigoma_positions.push(result.taigoma_positions);
-        return { yellow_positions, taigoma_positions };
+        result = serch_turn_color(
+          a_position,
+          one_direction,
+          2,
+          select,
+          reversi_positions,
+          temporary_reversi_positions
+        );
+        result && (reversi_positions = result);
       }
     });
   });
-};
-//裏返し処理
-const reversi = (y: number, x: number, taigoma_y: number, taigoma_x: number) => {
-  //ここにkyeで割りあてた対ゴマの位置リストから返す駒位置を計算し裏返す処理を書く
+  // タイゴマの位置を返す
+  return reversi_positions;
 };
 //駒設置と裏返し処理
 const othello = (y: number, x: number) => {
   if (board[y][x] === 7) {
     board[y][x] = turnColor;
-    //ここで、reversi関数を呼び出す
+    const reversi_positions: number[][] = Possible_click_positions([[y, x]], 1);
+    reversi_positions.forEach((n) => {
+      board[n[0]][n[1]] = turnColor;
+    });
+
     turnColor = 3 - turnColor;
   }
 };
@@ -91,7 +128,9 @@ export const boardrepository = {
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
-      Possible_click_positions();
+      othello(params.y, params.x);
+      remove_yellow();
+      Possible_click_positions(get_zero_positions(), 0);
     }
     return board;
   },
