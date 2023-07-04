@@ -46,6 +46,7 @@ const remove_yellow = () => {
   );
 };
 //隣が異色の場合、対ゴマ探しor候補地選出
+//ここの複雑度下げる
 const serch_turn_color = (
   a_position: number[],
   one_direction: number[],
@@ -86,6 +87,7 @@ const serch_turn_color = (
   temporary_reversi_positions = [];
 };
 //8方向参照
+//ここの複雑度下げる
 const Possible_click_positions = (positions: number[][], select: number): number[][] => {
   let result: number[][] | undefined = undefined;
   let reversi_positions: number[][] = [];
@@ -125,6 +127,13 @@ const othello = (y: number, x: number) => {
   }
 };
 export const boardrepository = {
+  getBoard: () => {
+    count[0] = board.flat().filter((n) => n === 2).length;
+    count[1] = board.flat().filter((n) => n === 1).length;
+
+    return { exBoard: board, exCount: count, exTurn: turn };
+  },
+
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
