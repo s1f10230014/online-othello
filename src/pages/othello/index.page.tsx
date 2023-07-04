@@ -9,21 +9,13 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
-  const [count, setCount] = useState<number[]>();
-  const turns = ['', '黒のターン', '白のターン', 'ゲーム終了'];
+
   const [board, setboard] = useState<number[][]>();
-  const [turn, setTurn] = useState<number>();
+
   const fetchBoard = async () => {
     const board = await apiClient.board.$get().catch(returnNull);
 
     if (board !== null) setboard(board.board);
-  };
-
-  const fetchArounds = async () => {
-    const count = await apiClient.board.$get().catch(returnNull);
-    const turn = await apiClient.board.$get().catch(returnNull);
-    if (count !== null) setCount(count.count);
-    if (turn !== null) setTurn(turn.turn);
   };
 
   const clickCell = async (x: number, y: number) => {
@@ -38,13 +30,7 @@ const Home = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const cancelId = setInterval(fetchArounds, 500);
-    return () => {
-      clearInterval(cancelId);
-    };
-  }, []);
-  if (!user || !board || !count || !turn) return <Loading visible />;
+  if (!user || !board) return <Loading visible />;
 
   return (
     <>
@@ -86,10 +72,6 @@ const Home = () => {
               </div>
             ))
           )}
-        </div>
-        <div>
-          <h1>{`${turns[turn]}`}</h1>
-          <h1>{`白：${count[0]}個 / 黒：${count[1]}個`}</h1>
         </div>
       </div>
     </>

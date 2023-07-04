@@ -111,7 +111,7 @@ const Possible_click_positions = (positions: number[][], select: number): number
       }
     });
   });
-  // タイゴマの位置を返す
+
   return reversi_positions;
 };
 //駒設置と裏返し処理
@@ -127,13 +127,6 @@ const othello = (y: number, x: number) => {
   }
 };
 export const boardrepository = {
-  getBoard: () => {
-    count[0] = board.flat().filter((n) => n === 2).length;
-    count[1] = board.flat().filter((n) => n === 1).length;
-
-    return { exBoard: board, exCount: count, exTurn: turn };
-  },
-
   getBoard: (): BoardArr => board,
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
