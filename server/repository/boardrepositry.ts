@@ -76,7 +76,7 @@ const Possible_click_positions = (positions: number[][]) => {
   });
 };
 //裏返し処理
-const reversi = (y: number, x: number) => {
+const reversi = (y: number, x: number, taigoma_y: number, taigoma_x: number) => {
   //ここにkyeで割りあてた対ゴマの位置リストから返す駒位置を計算し裏返す処理を書く
 };
 //駒設置と裏返し処理
