@@ -127,7 +127,9 @@ const othello = (y: number, x: number) => {
   }
 };
 export const boardrepository = {
-  getBoard: (): BoardArr => board,
+  getBoard: (): { board: BoardArr; turnColor: number } => {
+    return { board, turnColor };
+  },
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
       othello(params.y, params.x);

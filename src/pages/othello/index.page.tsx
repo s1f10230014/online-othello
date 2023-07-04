@@ -9,13 +9,18 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
+  const turnColor_state: string[] = ['終わり', '白の番', '黒の番'];
+  const [turnColor, setturnColor] = useState<number>();
 
   const [board, setboard] = useState<number[][]>();
 
   const fetchBoard = async () => {
-    const board = await apiClient.board.$get().catch(returnNull);
+    const res = await apiClient.board.$get().catch(returnNull);
 
-    if (board !== null) setboard(board.board);
+    if (res !== null) {
+      setboard(res.board);
+      setturnColor(res.turnColor);
+    }
   };
 
   const clickCell = async (x: number, y: number) => {
@@ -30,17 +35,15 @@ const Home = () => {
     };
   }, []);
 
-  if (!user || !board) return <Loading visible />;
+  if (!user || !board || !turnColor) return <Loading visible />;
 
   return (
     <>
       <BasicHeader user={user} />
       <div className={styles.container}>
-        {/* <div className={styles.game_table}>
-        <p>{turnColor === 1 ? '黒' : '白'}のターンです。</p>
-        <p>点数</p>
-        <p>白 {white_count}</p>
-        <p>黒 {black_count}</p> */}
+        <div className={styles.game_table}>
+          <p>{turnColor === 1 ? '黒' : '白'}のターンです。</p>
+        </div>
         {/* <div className={styles.caveat}>
           {white_pass_count === 1 && (
             <p>警告!pass2回で負け判定になります。只今の白pass{white_pass_count}です。</p>
