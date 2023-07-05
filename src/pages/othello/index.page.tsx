@@ -9,17 +9,16 @@ import styles from './othello.module.css';
 
 const Home = () => {
   const [user] = useAtom(userAtom);
-  const turnColor_state: string[] = ['終わり', '白の番', '黒の番'];
   const [turnColor, setturnColor] = useState<number>();
-
   const [board, setboard] = useState<number[][]>();
-
+  const [me_color, setmecolor] = useState<number>();
   const fetchBoard = async () => {
     const res = await apiClient.board.$get().catch(returnNull);
 
     if (res !== null) {
       setboard(res.board);
       setturnColor(res.turnColor);
+      setmecolor(res.me_color);
     }
   };
 
@@ -42,7 +41,7 @@ const Home = () => {
       <BasicHeader user={user} />
       <div className={styles.container}>
         <div className={styles.game_table}>
-          <p>{turnColor === 1 ? '黒' : '白'}のターンです。</p>
+          {turnColor === 1 ? '黒' : '白'}のターンです。 あなたは{me_color === 1 ? '黒' : '白'}です
         </div>
         {/* <div className={styles.caveat}>
           {white_pass_count === 1 && (
@@ -64,7 +63,7 @@ const Home = () => {
           {board.map((row, y) =>
             row.map((cell, x) => (
               <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickCell(x, y)}>
-                {cell !== 0 && cell !== 7 && (
+                {(cell === 1) | (cell === 2) && (
                   <div
                     className={styles.storn}
                     style={{ background: cell === 1 ? '#131212' : '#c3c3c3' }}
@@ -76,6 +75,7 @@ const Home = () => {
             ))
           )}
         </div>
+        <div className={styles.counttable} />
       </div>
     </>
   );

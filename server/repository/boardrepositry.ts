@@ -126,6 +126,7 @@ const othello = (y: number, x: number) => {
     turnColor = 3 - turnColor;
   }
 };
+
 export const boardrepository = {
   getBoard: (): { board: BoardArr; turnColor: number } => {
     return { board, turnColor };

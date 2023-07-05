@@ -1,12 +1,14 @@
 import { boardrepository } from '$/repository/boardrepositry';
+import { userColorRepository } from '$/repository/userColorRepository';
 import { defineController } from './$relay';
 
 export default defineController(() => ({
-  get: () => ({
+  get: ({ user }) => ({
     status: 200,
     body: {
       board: boardrepository.getBoard().board,
       turnColor: boardrepository.getBoard().turnColor,
+      me_color: userColorRepository.getUserColor(user.id),
     },
   }),
 
