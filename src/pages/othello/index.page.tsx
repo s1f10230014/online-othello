@@ -6,46 +6,43 @@ import { returnNull } from 'src/utils/returnNull';
 import { userAtom } from '../../atoms/user';
 import { BasicHeader } from '../@components/BasicHeader/BasicHeader';
 import styles from './othello.module.css';
-
 const Home = () => {
   const [user] = useAtom(userAtom);
   const [turnColor, setturnColor] = useState<number>();
   const [board, setboard] = useState<number[][]>();
-  const [me_color_number, setme_color_number] = useState<number>();
+  const [me_color, setme_color] = useState<number>();
   const [black_number, setbkack_number] = useState<number>();
   const [white_numbe, setwhite_number] = useState<number>();
+  const yossiy_idea: string[] = ['', '黒', '白'];
+  let safe_me_color = 0;
   const fetchBoard = async () => {
     const res = await apiClient.board.$get().catch(returnNull);
-
     if (res !== null) {
       setboard(res.board);
       setturnColor(res.turnColor);
-      setme_color_number(res.me_color);
+      setme_color(res.me_color);
       setbkack_number(res.black_number);
       setwhite_number(res.white_number);
     }
   };
-
   const clickCell = async (x: number, y: number) => {
     await apiClient.board.$post({ body: { x, y } });
     await fetchBoard();
   };
-
   useEffect(() => {
     const cancellid = setInterval(fetchBoard, 500);
     return () => {
       clearInterval(cancellid);
     };
   }, []);
-
   if (!user || !board || !turnColor) return <Loading visible />;
-
+  me_color && (safe_me_color = me_color);
   return (
     <>
       <BasicHeader user={user} />
       <div className={styles.container}>
         <div className={styles.game_table}>
-          {/* {turnColor === 1 ? '黒' : '白'}のターンです。 あなたは{me_color === 1 ? '黒' : '白'}です */}
+          {yossiy_idea[turnColor]}の番です。あなたは、{yossiy_idea[safe_me_color]}です。
         </div>
         {/* <div className={styles.caveat}>
           {white_pass_count === 1 && (
@@ -73,7 +70,6 @@ const Home = () => {
                     style={{ background: cell === 1 ? '#131212' : '#c3c3c3' }}
                   />
                 )}
-
                 {cell === 7 && <div className={styles.signpost} key={`${x}-${y}`} />}
               </div>
             ))
@@ -86,5 +82,4 @@ const Home = () => {
     </>
   );
 };
-
 export default Home;
