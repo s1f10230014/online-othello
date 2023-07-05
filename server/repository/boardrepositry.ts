@@ -23,6 +23,8 @@ const directions = [
   [-1, -1],
 ];
 let turnColor = 1;
+let black_number = 2;
+let white_number = 2;
 //0座標取得(候補地設置に使用)
 const get_zero_positions = () => {
   const zero_positions: number[][] = [];
@@ -34,6 +36,18 @@ const get_zero_positions = () => {
     });
   });
   return zero_positions;
+};
+//駒カウント
+const count = (serch_number: number) => {
+  let count = 0;
+  board.forEach((row) =>
+    row.forEach((cell) => {
+      if (cell === serch_number) {
+        count++;
+      }
+    })
+  );
+  return count;
 };
 //過去の黄色枠座標消去
 const remove_yellow = () => {
@@ -126,16 +140,22 @@ const othello = (y: number, x: number) => {
     turnColor = 3 - turnColor;
   }
 };
-
 export const boardrepository = {
-  getBoard: (): { board: BoardArr; turnColor: number } => {
-    return { board, turnColor };
+  getBoard: (): {
+    board: BoardArr;
+    turnColor: number;
+    black_number: number;
+    white_number: number;
+  } => {
+    return { board, turnColor, black_number, white_number };
   },
   clickBoard: (params: Pos, userId: UserId): BoardArr => {
     if (turnColor === userColorRepository.getUserColor(userId)) {
       othello(params.y, params.x);
       remove_yellow();
       Possible_click_positions(get_zero_positions(), 0);
+      black_number = count(1);
+      white_number = count(2);
     }
     return board;
   },

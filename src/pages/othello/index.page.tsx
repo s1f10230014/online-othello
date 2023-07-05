@@ -11,14 +11,18 @@ const Home = () => {
   const [user] = useAtom(userAtom);
   const [turnColor, setturnColor] = useState<number>();
   const [board, setboard] = useState<number[][]>();
-  const [me_color, setmecolor] = useState<number>();
+  const [me_color_number, setme_color_number] = useState<number>();
+  const [black_number, setbkack_number] = useState<number>();
+  const [white_numbe, setwhite_number] = useState<number>();
   const fetchBoard = async () => {
     const res = await apiClient.board.$get().catch(returnNull);
 
     if (res !== null) {
       setboard(res.board);
       setturnColor(res.turnColor);
-      setmecolor(res.me_color);
+      setme_color_number(res.me_color);
+      setbkack_number(res.black_number);
+      setwhite_number(res.white_number);
     }
   };
 
@@ -41,7 +45,7 @@ const Home = () => {
       <BasicHeader user={user} />
       <div className={styles.container}>
         <div className={styles.game_table}>
-          {turnColor === 1 ? '黒' : '白'}のターンです。 あなたは{me_color === 1 ? '黒' : '白'}です
+          {/* {turnColor === 1 ? '黒' : '白'}のターンです。 あなたは{me_color === 1 ? '黒' : '白'}です */}
         </div>
         {/* <div className={styles.caveat}>
           {white_pass_count === 1 && (
@@ -63,7 +67,7 @@ const Home = () => {
           {board.map((row, y) =>
             row.map((cell, x) => (
               <div className={styles.cell} key={`${x}-${y}`} onClick={() => clickCell(x, y)}>
-                {(cell === 1) | (cell === 2) && (
+                {(cell === 1 || cell === 2) && (
                   <div
                     className={styles.storn}
                     style={{ background: cell === 1 ? '#131212' : '#c3c3c3' }}
@@ -75,7 +79,9 @@ const Home = () => {
             ))
           )}
         </div>
-        <div className={styles.counttable} />
+        <div className={styles.game_table}>
+          白{white_numbe},黒{black_number}
+        </div>
       </div>
     </>
   );
