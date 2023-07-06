@@ -12,6 +12,7 @@ const board: BoardArr = [
   [0, 0, 0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
 ];
+
 const directions = [
   [0, -1],
   [1, -1],
@@ -140,6 +141,11 @@ const othello = (y: number, x: number) => {
     turnColor = 3 - turnColor;
   }
 };
+//pass
+const pass = () => {
+  count(7) === 0 && (turnColor = 3 - turnColor);
+  Possible_click_positions(get_zero_positions(), 0);
+};
 export const boardrepository = {
   getBoard: (): {
     board: BoardArr;
@@ -156,6 +162,7 @@ export const boardrepository = {
       Possible_click_positions(get_zero_positions(), 0);
       black_number = count(1);
       white_number = count(2);
+      pass();
     }
     return board;
   },
