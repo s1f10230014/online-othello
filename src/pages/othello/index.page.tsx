@@ -41,6 +41,9 @@ const Home = () => {
     <>
       <BasicHeader user={user} />
       <div className={styles.container}>
+        <div className={styles.pass_button} onClick={() => clickCell(8, 8)}>
+          Reset
+        </div>
         <div className={styles.game_table}>
           {yossiy_idea[turnColor]}の番です。あなたは、{yossiy_idea[safe_me_color]}です。
         </div>
@@ -57,9 +60,6 @@ const Home = () => {
         <div className={styles.caveat}>{white_pass_count === 2 && <p>警告!白の負けです。</p>}</div>
         <div className={styles.caveat}>{black_pass_count === 2 && <p>警告！黒の負けです。</p>}</div> */}
         {/* </div> */}
-        {/* <div className={styles.pass_button} onClick={() => clickCell(100, 100)}>
-          <p>pass</p>
-        </div> */}
         <div className={styles.board}>
           {board.map((row, y) =>
             row.map((cell, x) => (
